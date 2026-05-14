@@ -1,0 +1,2051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Arrays · 2D Arrays · Linked List · Stack · Queue — Visual Playground</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-deep:        #0a0e1a;
+    --bg-card:        #121829;
+    --bg-card-2:      #1a2238;
+    --border:         #232a44;
+    --border-strong:  #3a4570;
+
+    --text:           #e6e9f5;
+    --text-dim:       #8a94b8;
+    --text-faint:     #5b6788;
+
+    --teal:           #57e3d8;
+    --teal-dim:       #2ea99e;
+    --teal-glow:      rgba(87, 227, 216, 0.22);
+
+    --array:          #5acf86;
+    --array2d:        #f1c75c;
+    --linkedlist:     #57e3d8;
+    --stack:          #f5a76a;
+    --queue:          #a78bfa;
+
+    --green:          #5acf86;
+    --red:            #ef6b8d;
+    --yellow:         #f1c75c;
+
+    --font-display:   'Fraunces', Georgia, serif;
+    --font-body:      'Inter', system-ui, sans-serif;
+    --font-mono:      'JetBrains Mono', 'Menlo', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* Decorative noise + radial gradient overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 1200px 600px at 15% -5%, rgba(87, 227, 216, 0.08), transparent 70%),
+      radial-gradient(ellipse 900px 500px at 100% 100%, rgba(167, 139, 250, 0.06), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ───── Layout ───── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 28px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ───── Header ───── */
+  .header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .header-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 4vw, 44px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .header-title em {
+    font-style: italic;
+    color: var(--teal);
+    font-weight: 300;
+  }
+  .header-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-align: right;
+  }
+  .header-meta div { margin-bottom: 4px; }
+  .header-meta strong { color: var(--teal); }
+
+  /* ───── Tabs ───── */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 14px 22px;
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tab:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+  }
+  .tab.active {
+    background: var(--bg-card-2);
+    border-color: currentColor;
+    color: var(--accent, var(--teal));
+  }
+  .tab-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    opacity: 0.55;
+    letter-spacing: 0.1em;
+  }
+
+  /* ───── Section panels ───── */
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .panel-header {
+    padding: 28px 32px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .panel-title-block {
+    flex: 1;
+    min-width: 280px;
+  }
+  .panel-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent, var(--teal));
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .panel-eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: currentColor;
+  }
+  .panel-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.4vw, 38px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 12px;
+  }
+  .panel-title em {
+    font-style: italic;
+    color: var(--accent, var(--teal));
+    font-weight: 300;
+  }
+  .panel-subtitle {
+    color: var(--text-dim);
+    max-width: 580px;
+    font-size: 14px;
+  }
+  .panel-traits {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px;
+  }
+  .trait {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    font-size: 12px;
+  }
+  .trait-label {
+    font-family: var(--font-mono);
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10px;
+    min-width: 50px;
+  }
+  .trait-value {
+    color: var(--text);
+    font-family: var(--font-mono);
+  }
+
+  /* ───── Stage (visualization area) ───── */
+  .stage {
+    padding: 36px 32px;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse 600px 200px at 50% 50%, rgba(255,255,255,0.018), transparent 60%);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  /* ───── Controls ───── */
+  .controls {
+    padding: 20px 32px 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .control-input {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    width: 110px;
+    transition: border-color 0.2s;
+  }
+  .control-input:focus {
+    outline: none;
+    border-color: var(--accent, var(--teal));
+  }
+  .btn {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover:not(:disabled) {
+    border-color: var(--accent, var(--teal));
+    color: var(--accent, var(--teal));
+    transform: translateY(-1px);
+  }
+  .btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--accent, var(--teal));
+    color: var(--bg-deep);
+    border-color: var(--accent, var(--teal));
+    font-weight: 600;
+  }
+  .btn-primary:hover:not(:disabled) {
+    color: var(--bg-deep);
+    filter: brightness(1.1);
+  }
+  .btn-danger:hover:not(:disabled) {
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .btn-icon {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .control-spacer { flex: 1; min-width: 8px; }
+  .control-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .control-meta span { color: var(--text); }
+
+  /* ───── Status bar ───── */
+  .status {
+    padding: 14px 32px;
+    background: var(--bg-card-2);
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent, var(--teal));
+    box-shadow: 0 0 8px currentColor;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.15); }
+  }
+
+  /* ───── Explainer cards ───── */
+  .explainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 28px 32px 32px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-deep);
+  }
+  .explain-card {
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent, var(--teal));
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .explain-card h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .explain-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .explain-card code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--bg-deep);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--accent, var(--teal));
+  }
+
+  /* ───── ARRAY (1D) ───── */
+  .arr-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 30px 0;
+    position: relative;
+  }
+  .arr-cell {
+    width: 70px;
+    height: 70px;
+    border: 2px solid var(--array);
+    background: rgba(90, 207, 134, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--array);
+    position: relative;
+    border-right-width: 1px;
+  }
+  .arr-cell:first-child { border-radius: 8px 0 0 8px; }
+  .arr-cell:last-child  { border-radius: 0 8px 8px 0; border-right-width: 2px; }
+  .arr-cell.single      { border-radius: 8px; border-right-width: 2px; }
+  .arr-cell.empty-cell  {
+    color: var(--text-faint);
+    background: transparent;
+    border-style: dashed;
+  }
+  .arr-index {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.05em;
+  }
+  .arr-cell.highlight {
+    border-color: var(--yellow);
+    background: rgba(241,199,92,0.12);
+    color: var(--yellow);
+    box-shadow: 0 0 20px rgba(241,199,92,0.3);
+  }
+  .arr-cell-wrap {
+    position: relative;
+  }
+  .arr-bracket-l, .arr-bracket-r {
+    font-family: var(--font-mono);
+    font-size: 50px;
+    color: var(--array);
+    font-weight: 200;
+    line-height: 1;
+    padding: 0 8px;
+  }
+
+  /* ───── 2D ARRAY (matrix) ───── */
+  .matrix-wrap {
+    display: inline-block;
+    padding: 24px 36px;
+    position: relative;
+  }
+  .matrix-col-headers {
+    display: flex;
+    gap: 4px;
+    padding-left: 30px;
+    margin-bottom: 6px;
+  }
+  .matrix-col-headers .col-h {
+    width: 56px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.08em;
+  }
+  .matrix-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .matrix-row-h {
+    width: 26px;
+    text-align: right;
+    margin-right: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.08em;
+  }
+  .matrix-cell {
+    width: 56px;
+    height: 56px;
+    border: 2px solid var(--array2d);
+    background: rgba(241,199,92,0.05);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--array2d);
+    transition: all 0.25s ease;
+  }
+  .matrix-cell.highlight-row {
+    background: rgba(241,199,92,0.18);
+    box-shadow: 0 0 12px rgba(241,199,92,0.25);
+  }
+  .matrix-cell.highlight-col {
+    background: rgba(241,199,92,0.18);
+    box-shadow: 0 0 12px rgba(241,199,92,0.25);
+  }
+  .matrix-cell.highlight-cell {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(239,107,141,0.15);
+    box-shadow: 0 0 20px rgba(239,107,141,0.35);
+    transform: scale(1.1);
+  }
+  .matrix-cell.empty-cell {
+    border-style: dashed;
+    color: var(--text-faint);
+    background: transparent;
+  }
+
+  /* Size controls for grids */
+  .size-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 4px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .size-group .size-label {
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10px;
+  }
+  .size-btn {
+    background: transparent;
+    color: var(--text);
+    border: none;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .size-btn:hover { background: var(--bg-card-2); color: var(--accent, var(--teal)); }
+  .size-val {
+    min-width: 12px;
+    text-align: center;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ───── LINKED LIST node ───── */
+  .ll-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    min-height: 110px;
+    padding: 20px 0;
+  }
+  .ll-node {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid var(--linkedlist);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-card-2);
+    box-shadow: 0 4px 20px rgba(87, 227, 216, 0.08);
+    min-width: 110px;
+  }
+  .ll-data {
+    padding: 18px 20px;
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--linkedlist);
+    border-right: 1px solid var(--linkedlist);
+    min-width: 70px;
+    text-align: center;
+    background: rgba(87, 227, 216, 0.05);
+  }
+  .ll-pointer {
+    padding: 18px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text-dim);
+    min-width: 50px;
+  }
+  .ll-arrow {
+    color: var(--linkedlist);
+    font-size: 28px;
+    padding: 0 6px;
+    flex-shrink: 0;
+    font-family: monospace;
+    line-height: 1;
+  }
+  .ll-null {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-faint);
+    padding: 0 14px;
+    letter-spacing: 0.1em;
+  }
+  .ll-head-label, .ll-tail-label {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--linkedlist);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .ll-node-wrap { position: relative; }
+  .empty-msg {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-faint);
+    letter-spacing: 0.05em;
+  }
+
+  /* ───── STACK ───── */
+  .stack-frame {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 6px;
+    min-width: 200px;
+    border-left: 2px dashed var(--border-strong);
+    border-right: 2px dashed var(--border-strong);
+    border-bottom: 2px solid var(--stack);
+    padding: 20px 12px 8px;
+    min-height: 200px;
+    justify-content: flex-start;
+    position: relative;
+  }
+  .stack-frame::before {
+    content: 'BOTTOM';
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--text-faint);
+  }
+  .stack-frame::after {
+    content: 'TOP →';
+    position: absolute;
+    top: -2px;
+    right: -50px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--stack);
+    background: var(--bg-card);
+    padding: 2px 6px;
+  }
+  .stack-item {
+    padding: 14px 24px;
+    background: rgba(245, 167, 106, 0.08);
+    border: 2px solid var(--stack);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--stack);
+    text-align: center;
+    min-width: 160px;
+  }
+
+  /* ───── QUEUE ───── */
+  .queue-container {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    padding: 20px 0;
+  }
+  .queue-label-front, .queue-label-rear {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--queue);
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--queue);
+    border-radius: 4px;
+    background: var(--bg-card);
+  }
+  .queue-track {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px;
+    border-top: 2px solid var(--queue);
+    border-bottom: 2px solid var(--queue);
+    background: linear-gradient(180deg, rgba(167, 139, 250, 0.05), transparent);
+    min-height: 80px;
+    align-items: center;
+  }
+  .queue-item {
+    padding: 14px 22px;
+    background: rgba(167, 139, 250, 0.08);
+    border: 2px solid var(--queue);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--queue);
+    text-align: center;
+    min-width: 70px;
+  }
+
+  /* Animation helpers */
+  .anim-flash {
+    animation: flash 0.6s ease;
+  }
+  @keyframes flash {
+    0%, 100% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+    50%      { box-shadow: 0 0 20px var(--accent); }
+  }
+  .anim-slide-in {
+    animation: slideIn 0.4s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-15px) scale(0.85); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .anim-slide-in-right {
+    animation: slideInRight 0.4s ease;
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(-30px) scale(0.85); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+  .anim-slide-out {
+    animation: slideOut 0.4s ease forwards;
+  }
+  @keyframes slideOut {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to   { opacity: 0; transform: translateX(-30px) scale(0.85); }
+  }
+
+  /* ─── ENHANCED STACK ANIMATIONS ─── */
+  /* Push: item drops in from above with a subtle bounce */
+  .stack-push-in {
+    animation: stackPushIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes stackPushIn {
+    0%   { opacity: 0; transform: translateY(-80px) scale(0.7) rotate(-3deg); }
+    60%  { opacity: 1; transform: translateY(8px) scale(1.05); }
+    80%  { transform: translateY(-3px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  /* Pop: item lifts up and out, fading */
+  .stack-pop-out {
+    animation: stackPopOut 0.55s ease-in forwards;
+  }
+  @keyframes stackPopOut {
+    0%   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    35%  { opacity: 1; transform: translateY(-15px) scale(1.08) rotate(2deg); }
+    100% { opacity: 0; transform: translateY(-90px) scale(0.7) rotate(8deg); filter: blur(2px); }
+  }
+
+  /* ─── ENHANCED QUEUE ANIMATIONS ─── */
+  /* Enqueue: item slides in from the right with a slight settle */
+  .queue-enqueue-in {
+    animation: queueEnqueueIn 0.55s cubic-bezier(0.25, 1.2, 0.4, 1);
+  }
+  @keyframes queueEnqueueIn {
+    0%   { opacity: 0; transform: translateX(80px) scale(0.7); }
+    65%  { opacity: 1; transform: translateX(-6px) scale(1.04); }
+    100% { opacity: 1; transform: translateX(0) scale(1); }
+  }
+  /* Dequeue: item slides out to the LEFT and fades */
+  .queue-dequeue-out {
+    animation: queueDequeueOut 0.6s ease-in forwards;
+  }
+  @keyframes queueDequeueOut {
+    0%   { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
+    30%  { opacity: 1; transform: translateX(-10px) scale(1.05); }
+    100% { opacity: 0; transform: translateX(-100px) scale(0.7); filter: blur(3px); }
+  }
+
+  .highlight {
+    animation: highlight 0.7s ease;
+  }
+  @keyframes highlight {
+    0% { background-color: rgba(87, 227, 216, 0); }
+    40% { background-color: var(--accent-glow, rgba(87, 227, 216, 0.25)); }
+    100% { background-color: rgba(87, 227, 216, 0); }
+  }
+  .arrow-grow {
+    animation: arrowGrow 0.3s ease;
+  }
+  @keyframes arrowGrow {
+    from { transform: scaleX(0); opacity: 0; }
+    to   { transform: scaleX(1); opacity: 1; }
+  }
+
+  /* Operations panel */
+  .ops-list {
+    list-style: none;
+    margin-top: 4px;
+  }
+  .ops-list li {
+    padding: 2px 0;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .ops-list code {
+    font-family: var(--font-mono);
+    color: var(--accent, var(--teal));
+    margin-right: 8px;
+  }
+
+  /* Use cases */
+  .uses-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .use-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 24px 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+  .footer-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--border);
+    margin: 0 auto 20px;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+/* ═════════════════════════════════════════════════
+   ARRAY (1D)  ─  fixed-size, contiguous, index-based
+   ═════════════════════════════════════════════════ */
+let _arrId = 0;
+const newArrCell = (v) => ({ v, id: ++_arrId });
+
+function ArrayView() {
+  const [arr, setArr] = useState(() => [10, 20, 30, 40, 50].map(newArrCell));
+  const [size, setSize] = useState(8);  // capacity (visual)
+  const [inputVal, setInputVal] = useState('');
+  const [indexVal, setIndexVal] = useState('');
+  const [highlight, setHighlight] = useState(null);
+  const [status, setStatus] = useState('Ready. Array cells are stored side-by-side in memory — access any index in O(1).');
+
+  const parseVal = () => {
+    const v = inputVal.trim();
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : v;
+  };
+  const parseIdx = () => {
+    const v = indexVal.trim();
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const accessAt = () => {
+    const i = parseIdx();
+    if (i === null) { setStatus('Enter an index to access.'); return; }
+    if (i < 0 || i >= arr.length) {
+      setStatus(`Index ${i} is out of bounds. Valid: 0 to ${arr.length - 1}.`);
+      return;
+    }
+    setHighlight(i);
+    setStatus(`Accessed arr[${i}] = ${arr[i].v}. Direct address calculation — O(1).`);
+    setTimeout(() => setHighlight(null), 1200);
+  };
+
+  const updateAt = () => {
+    const i = parseIdx();
+    const val = parseVal();
+    if (i === null) { setStatus('Enter an index.'); return; }
+    if (val === null) { setStatus('Enter a value.'); return; }
+    if (i < 0 || i >= arr.length) {
+      setStatus(`Index ${i} out of bounds.`);
+      return;
+    }
+    const next = [...arr];
+    next[i] = newArrCell(val);
+    setArr(next);
+    setHighlight(i);
+    setStatus(`Set arr[${i}] = ${val}. Replaced in place — O(1).`);
+    setInputVal(''); setIndexVal('');
+    setTimeout(() => setHighlight(null), 1200);
+  };
+
+  const pushBack = () => {
+    if (arr.length >= size) {
+      setStatus(`Array is full (capacity = ${size}). Increase size or remove an item.`);
+      return;
+    }
+    const val = parseVal() ?? Math.floor(Math.random() * 90 + 10);
+    setArr([...arr, newArrCell(val)]);
+    setStatus(`Pushed ${val} at index ${arr.length}. Amortised O(1).`);
+    setInputVal('');
+    setHighlight(arr.length);
+    setTimeout(() => setHighlight(null), 800);
+  };
+
+  const popBack = () => {
+    if (!arr.length) { setStatus('Array is empty.'); return; }
+    const last = arr[arr.length - 1].v;
+    setArr(arr.slice(0, -1));
+    setStatus(`Removed last element (${last}). O(1).`);
+  };
+
+  const insertAt = () => {
+    const i = parseIdx();
+    const val = parseVal();
+    if (i === null) { setStatus('Enter an index for insertion.'); return; }
+    if (val === null) { setStatus('Enter a value to insert.'); return; }
+    if (i < 0 || i > arr.length) {
+      setStatus(`Insertion index must be 0 to ${arr.length}.`);
+      return;
+    }
+    if (arr.length >= size) {
+      setStatus(`Array is full (capacity = ${size}).`);
+      return;
+    }
+    const next = [...arr.slice(0, i), newArrCell(val), ...arr.slice(i)];
+    setArr(next);
+    setHighlight(i);
+    setStatus(`Inserted ${val} at index ${i}. All elements from ${i} onward shifted right — O(n).`);
+    setInputVal(''); setIndexVal('');
+    setTimeout(() => setHighlight(null), 1200);
+  };
+
+  const deleteAt = () => {
+    const i = parseIdx();
+    if (i === null) { setStatus('Enter an index to delete.'); return; }
+    if (i < 0 || i >= arr.length) {
+      setStatus(`Index ${i} out of bounds.`);
+      return;
+    }
+    const removed = arr[i].v;
+    setArr([...arr.slice(0, i), ...arr.slice(i + 1)]);
+    setStatus(`Deleted arr[${i}] (${removed}). All elements after shifted left — O(n).`);
+    setIndexVal('');
+  };
+
+  const search = () => {
+    const target = parseVal();
+    if (target === null) { setStatus('Enter a value to search.'); return; }
+    let i = 0;
+    const step = () => {
+      if (i >= arr.length) {
+        setHighlight(null);
+        setStatus(`${target} not found after checking all ${arr.length} cells. O(n).`);
+        return;
+      }
+      setHighlight(i);
+      if (String(arr[i].v) === String(target)) {
+        setStatus(`Found ${target} at index ${i}. Visited ${i + 1} cells — O(n) linear search.`);
+        setTimeout(() => setHighlight(null), 1000);
+        return;
+      }
+      i++;
+      setTimeout(step, 300);
+    };
+    step();
+  };
+
+  const reset = () => {
+    setArr([10, 20, 30, 40, 50].map(newArrCell));
+    setSize(8);
+    setStatus('Reset to default array.');
+    setInputVal(''); setIndexVal('');
+  };
+
+  return (
+    <div className="panel" style={{ '--accent': 'var(--array)', '--accent-glow': 'rgba(90, 207, 134, 0.22)' }}>
+      <div className="panel-header">
+        <div className="panel-title-block">
+          <div className="panel-eyebrow">01 / Array · 1D</div>
+          <h2 className="panel-title">A <em>row of boxes</em>, side by side in memory</h2>
+          <p className="panel-subtitle">
+            Every cell sits right next to its neighbours. Because of that, the computer
+            can jump to <em>any</em> index instantly — but inserting in the middle means
+            shifting everything that comes after.
+          </p>
+        </div>
+        <div className="panel-traits">
+          <div className="trait"><span className="trait-label">Order</span><span className="trait-value">indexed</span></div>
+          <div className="trait"><span className="trait-label">Access</span><span className="trait-value">O(1)</span></div>
+          <div className="trait"><span className="trait-label">Insert</span><span className="trait-value">O(n)</span></div>
+          <div className="trait"><span className="trait-label">Memory</span><span className="trait-value">contiguous</span></div>
+        </div>
+      </div>
+
+      <div className="stage">
+        {arr.length === 0 && size === 0 ? (
+          <div className="empty-msg">[ empty array ]</div>
+        ) : (
+          <div className="arr-row">
+            <span className="arr-bracket-l">[</span>
+            {Array.from({ length: size }).map((_, i) => {
+              const cell = arr[i];
+              const isHL = highlight === i;
+              const isEmpty = !cell;
+              return (
+                <div key={cell ? cell.id : `empty-${i}`} className="arr-cell-wrap">
+                  <div
+                    className={`arr-cell ${isEmpty ? 'empty-cell' : ''} ${isHL ? 'highlight' : ''} ${size === 1 ? 'single' : ''}`}
+                  >
+                    {isEmpty ? '·' : cell.v}
+                  </div>
+                  <div className="arr-index">[{i}]</div>
+                </div>
+              );
+            })}
+            <span className="arr-bracket-r">]</span>
+          </div>
+        )}
+      </div>
+
+      <div className="controls">
+        <input
+          className="control-input"
+          placeholder="value..."
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value)}
+          style={{width: '90px'}}
+        />
+        <input
+          className="control-input"
+          placeholder="index..."
+          value={indexVal}
+          onChange={(e) => setIndexVal(e.target.value)}
+          style={{width: '85px'}}
+        />
+        <button className="btn" onClick={accessAt}>Access</button>
+        <button className="btn" onClick={updateAt}>Update</button>
+        <button className="btn" onClick={insertAt}>Insert at</button>
+        <button className="btn btn-danger" onClick={deleteAt}>Delete at</button>
+        <button className="btn btn-primary" onClick={pushBack}>Push back</button>
+        <button className="btn btn-danger" onClick={popBack}>Pop back</button>
+        <button className="btn" onClick={search}>Search</button>
+        <div className="control-spacer"></div>
+        <div className="size-group">
+          <span className="size-label">capacity</span>
+          <button className="size-btn" onClick={() => setSize(Math.max(arr.length, size - 1))}>−</button>
+          <span className="size-val">{size}</span>
+          <button className="size-btn" onClick={() => setSize(Math.min(size + 1, 12))}>+</button>
+        </div>
+        <span className="control-meta">len <span>{arr.length}</span></span>
+        <button className="btn" onClick={reset}>↺ Reset</button>
+      </div>
+
+      <div className="status">
+        <span className="status-dot"></span>
+        {status}
+      </div>
+
+      <div className="explainer">
+        <div className="explain-card">
+          <h4>How it works</h4>
+          <p>
+            Cells live in one contiguous block of memory. The address of
+            <code>arr[i]</code> is computed as <code>base + i × size</code> —
+            that's why access is always O(1) regardless of array size.
+          </p>
+        </div>
+        <div className="explain-card">
+          <h4>Operations</h4>
+          <ul className="ops-list">
+            <li><code>arr[i]</code>       O(1) — direct address</li>
+            <li><code>arr[i] = v</code>   O(1) — replace in place</li>
+            <li><code>push(v)</code>      O(1) — amortised</li>
+            <li><code>insert(i,v)</code>  O(n) — shift right</li>
+            <li><code>delete(i)</code>    O(n) — shift left</li>
+            <li><code>search(v)</code>    O(n) — scan</li>
+          </ul>
+        </div>
+        <div className="explain-card">
+          <h4>Used for</h4>
+          <div className="uses-grid">
+            <span className="use-tag">scores / grades</span>
+            <span className="use-tag">image pixels</span>
+            <span className="use-tag">buffers</span>
+            <span className="use-tag">lookup tables</span>
+            <span className="use-tag">CSV rows</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ═════════════════════════════════════════════════
+   2D ARRAY  ─  rows × columns (matrix / grid)
+   ═════════════════════════════════════════════════ */
+function Array2DView() {
+  const initial = () => [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 11, 12],
+  ];
+  const [grid, setGrid] = useState(initial());
+  const [rowVal, setRowVal] = useState('');
+  const [colVal, setColVal] = useState('');
+  const [valVal, setValVal] = useState('');
+  const [highlight, setHighlight] = useState({ row: null, col: null, mode: null });
+  const [status, setStatus] = useState('Ready. A 2D array is a grid: access any cell with two indices [row][col] in O(1).');
+
+  const rows = grid.length;
+  const cols = grid[0]?.length || 0;
+
+  const parseN = (s) => {
+    const n = parseInt(s.trim(), 10);
+    return Number.isFinite(n) ? n : null;
+  };
+  const parseV = (s) => {
+    const v = s.trim();
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : v;
+  };
+
+  const accessCell = () => {
+    const r = parseN(rowVal);
+    const c = parseN(colVal);
+    if (r === null || c === null) { setStatus('Enter row and column.'); return; }
+    if (r < 0 || r >= rows || c < 0 || c >= cols) {
+      setStatus(`Out of bounds. Valid: row 0–${rows-1}, col 0–${cols-1}.`);
+      return;
+    }
+    setHighlight({ row: r, col: c, mode: 'cell' });
+    setStatus(`grid[${r}][${c}] = ${grid[r][c]}. Both indices compute directly to a memory address — O(1).`);
+    setTimeout(() => setHighlight({ row: null, col: null, mode: null }), 1500);
+  };
+
+  const updateCell = () => {
+    const r = parseN(rowVal);
+    const c = parseN(colVal);
+    const v = parseV(valVal);
+    if (r === null || c === null) { setStatus('Enter row and column.'); return; }
+    if (v === null) { setStatus('Enter a value.'); return; }
+    if (r < 0 || r >= rows || c < 0 || c >= cols) {
+      setStatus(`Out of bounds.`);
+      return;
+    }
+    const next = grid.map((row, i) => row.map((cell, j) => (i === r && j === c ? v : cell)));
+    setGrid(next);
+    setHighlight({ row: r, col: c, mode: 'cell' });
+    setStatus(`Set grid[${r}][${c}] = ${v}. Updated in place — O(1).`);
+    setValVal('');
+    setTimeout(() => setHighlight({ row: null, col: null, mode: null }), 1500);
+  };
+
+  const highlightRow = () => {
+    const r = parseN(rowVal);
+    if (r === null) { setStatus('Enter a row index.'); return; }
+    if (r < 0 || r >= rows) { setStatus(`Row out of bounds.`); return; }
+    setHighlight({ row: r, col: null, mode: 'row' });
+    setStatus(`Row ${r} = [${grid[r].join(', ')}]. Walking a row is O(cols).`);
+    setTimeout(() => setHighlight({ row: null, col: null, mode: null }), 1800);
+  };
+
+  const highlightCol = () => {
+    const c = parseN(colVal);
+    if (c === null) { setStatus('Enter a column index.'); return; }
+    if (c < 0 || c >= cols) { setStatus(`Column out of bounds.`); return; }
+    const colVals = grid.map(r => r[c]);
+    setHighlight({ row: null, col: c, mode: 'col' });
+    setStatus(`Column ${c} = [${colVals.join(', ')}]. Walking a column is O(rows).`);
+    setTimeout(() => setHighlight({ row: null, col: null, mode: null }), 1800);
+  };
+
+  const addRow = () => {
+    if (rows >= 6) { setStatus('Max 6 rows for display.'); return; }
+    const newRow = Array.from({ length: cols }, () => Math.floor(Math.random() * 90 + 10));
+    setGrid([...grid, newRow]);
+    setStatus(`Added a new row at the bottom. Rows = ${rows + 1}.`);
+  };
+  const addCol = () => {
+    if (cols >= 6) { setStatus('Max 6 cols for display.'); return; }
+    setGrid(grid.map(r => [...r, Math.floor(Math.random() * 90 + 10)]));
+    setStatus(`Added a new column on the right. Cols = ${cols + 1}.`);
+  };
+  const removeRow = () => {
+    if (rows <= 1) { setStatus('Cannot remove last row.'); return; }
+    setGrid(grid.slice(0, -1));
+    setStatus(`Removed last row. Rows = ${rows - 1}.`);
+  };
+  const removeCol = () => {
+    if (cols <= 1) { setStatus('Cannot remove last column.'); return; }
+    setGrid(grid.map(r => r.slice(0, -1)));
+    setStatus(`Removed last column. Cols = ${cols - 1}.`);
+  };
+
+  const reset = () => {
+    setGrid(initial());
+    setRowVal(''); setColVal(''); setValVal('');
+    setStatus('Reset to default 3 × 4 grid.');
+  };
+
+  return (
+    <div className="panel" style={{ '--accent': 'var(--array2d)', '--accent-glow': 'rgba(241, 199, 92, 0.22)' }}>
+      <div className="panel-header">
+        <div className="panel-title-block">
+          <div className="panel-eyebrow">02 / Array · 2D</div>
+          <h2 className="panel-title">A <em>grid</em> of values — rows × columns</h2>
+          <p className="panel-subtitle">
+            Like a spreadsheet or a chess board: use two indices —
+            <code style={{fontFamily:'var(--font-mono)', color:'var(--array2d)', background:'var(--bg-deep)', padding:'1px 6px', borderRadius:'3px', margin:'0 4px'}}>grid[row][col]</code>
+            — to address any cell. Excellent for images, game boards, and tabular data.
+          </p>
+        </div>
+        <div className="panel-traits">
+          <div className="trait"><span className="trait-label">Shape</span><span className="trait-value">{rows} × {cols}</span></div>
+          <div className="trait"><span className="trait-label">Access</span><span className="trait-value">O(1)</span></div>
+          <div className="trait"><span className="trait-label">Walk</span><span className="trait-value">O(r×c)</span></div>
+          <div className="trait"><span className="trait-label">Cells</span><span className="trait-value">{rows * cols}</span></div>
+        </div>
+      </div>
+
+      <div className="stage">
+        <div className="matrix-wrap">
+          <div className="matrix-col-headers">
+            {Array.from({ length: cols }, (_, c) => (
+              <div key={c} className="col-h">[{c}]</div>
+            ))}
+          </div>
+          {grid.map((row, r) => (
+            <div key={r} className="matrix-row">
+              <div className="matrix-row-h">[{r}]</div>
+              {row.map((cell, c) => {
+                const isHLRow = highlight.mode === 'row' && highlight.row === r;
+                const isHLCol = highlight.mode === 'col' && highlight.col === c;
+                const isHLCell = highlight.mode === 'cell' && highlight.row === r && highlight.col === c;
+                const cls = isHLCell ? 'highlight-cell' : isHLRow ? 'highlight-row' : isHLCol ? 'highlight-col' : '';
+                return (
+                  <div key={c} className={`matrix-cell ${cls}`}>
+                    {cell}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="controls">
+        <input
+          className="control-input"
+          placeholder="row..."
+          value={rowVal}
+          onChange={(e) => setRowVal(e.target.value)}
+          style={{width: '75px'}}
+        />
+        <input
+          className="control-input"
+          placeholder="col..."
+          value={colVal}
+          onChange={(e) => setColVal(e.target.value)}
+          style={{width: '75px'}}
+        />
+        <input
+          className="control-input"
+          placeholder="value..."
+          value={valVal}
+          onChange={(e) => setValVal(e.target.value)}
+          style={{width: '85px'}}
+        />
+        <button className="btn" onClick={accessCell}>Access [r][c]</button>
+        <button className="btn" onClick={updateCell}>Update</button>
+        <button className="btn" onClick={highlightRow}>Show row</button>
+        <button className="btn" onClick={highlightCol}>Show col</button>
+        <div className="control-spacer"></div>
+        <button className="btn" onClick={addRow} title="Add row">+row</button>
+        <button className="btn" onClick={removeRow} title="Remove row">−row</button>
+        <button className="btn" onClick={addCol} title="Add column">+col</button>
+        <button className="btn" onClick={removeCol} title="Remove column">−col</button>
+        <button className="btn" onClick={reset}>↺ Reset</button>
+      </div>
+
+      <div className="status">
+        <span className="status-dot"></span>
+        {status}
+      </div>
+
+      <div className="explainer">
+        <div className="explain-card">
+          <h4>How it works</h4>
+          <p>
+            A 2D array is really an array of arrays. Some languages lay it out as
+            one continuous block (row-major), others as separate rows. Either way,
+            <code>grid[r][c]</code> computes to one memory address — O(1) access.
+          </p>
+        </div>
+        <div className="explain-card">
+          <h4>Operations</h4>
+          <ul className="ops-list">
+            <li><code>g[r][c]</code>      O(1) — read a cell</li>
+            <li><code>g[r][c] = v</code>  O(1) — write a cell</li>
+            <li><code>row</code> walk     O(cols)</li>
+            <li><code>col</code> walk     O(rows)</li>
+            <li><code>full</code> scan    O(rows × cols)</li>
+          </ul>
+        </div>
+        <div className="explain-card">
+          <h4>Used for</h4>
+          <div className="uses-grid">
+            <span className="use-tag">images (pixel grid)</span>
+            <span className="use-tag">game boards</span>
+            <span className="use-tag">spreadsheets</span>
+            <span className="use-tag">matrices</span>
+            <span className="use-tag">maps / mazes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ═════════════════════════════════════════════════
+   LINKED LIST  ─  ordered nodes connected by pointers
+   ═════════════════════════════════════════════════ */
+let _llId = 0;
+const newLLNode = (v) => ({ v, id: ++_llId });
+
+function LinkedListView() {
+  const [nodes, setNodes] = useState(() => [10, 20, 30].map(newLLNode));
+  const [inputVal, setInputVal] = useState('');
+  const [indexVal, setIndexVal] = useState('');
+  const [status, setStatus] = useState('Ready. Try inserting or removing nodes — at the ends, or anywhere in the middle.');
+  const [highlight, setHighlight] = useState(null);
+
+  const parseInput = () => {
+    const v = inputVal.trim();
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : v;
+  };
+  const parseIdx = () => {
+    const v = indexVal.trim();
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const insertHead = () => {
+    const val = parseInput() ?? Math.floor(Math.random() * 90 + 10);
+    setNodes([newLLNode(val), ...nodes]);
+    setStatus(`Inserted ${val} at HEAD. The new node's next pointer now points to the old head. O(1).`);
+    setInputVal('');
+    setHighlight(0);
+    setTimeout(() => setHighlight(null), 700);
+  };
+
+  const insertTail = () => {
+    const val = parseInput() ?? Math.floor(Math.random() * 90 + 10);
+    setNodes([...nodes, newLLNode(val)]);
+    setStatus(`Inserted ${val} at TAIL. We walked the list to find the last node, then set its next to the new node. O(n) without a tail pointer.`);
+    setInputVal('');
+    setHighlight(nodes.length);
+    setTimeout(() => setHighlight(null), 700);
+  };
+
+  const insertAt = () => {
+    const val = parseInput();
+    const i = parseIdx();
+    if (val === null) { setStatus('Enter a value to insert.'); return; }
+    if (i === null)   { setStatus('Enter a position (0 to ' + nodes.length + ').'); return; }
+    if (i < 0 || i > nodes.length) {
+      setStatus(`Position ${i} out of range. Valid: 0 to ${nodes.length}.`);
+      return;
+    }
+    // Animate the walk to position i, then insert
+    let cur = 0;
+    const walk = () => {
+      if (cur >= i) {
+        // do the insert
+        const newList = [...nodes.slice(0, i), newLLNode(val), ...nodes.slice(i)];
+        setNodes(newList);
+        setHighlight(i);
+        if (i === 0) {
+          setStatus(`Inserted ${val} at position 0 (HEAD). No walk needed — O(1).`);
+        } else {
+          setStatus(`Walked ${i} step(s) to reach position ${i}, then rewired pointers: prev.next = newNode, newNode.next = old. O(n).`);
+        }
+        setIndexVal('');
+        setInputVal('');
+        setTimeout(() => setHighlight(null), 900);
+        return;
+      }
+      setHighlight(cur);
+      cur++;
+      setTimeout(walk, 300);
+    };
+    walk();
+  };
+
+  const removeHead = () => {
+    if (!nodes.length) {
+      setStatus('Empty list. Nothing to remove.');
+      return;
+    }
+    const removed = nodes[0].v;
+    setNodes(nodes.slice(1));
+    setStatus(`Removed ${removed} from HEAD. HEAD now points to what was the second node. O(1).`);
+  };
+
+  const removeTail = () => {
+    if (!nodes.length) {
+      setStatus('Empty list. Nothing to remove.');
+      return;
+    }
+    const removed = nodes[nodes.length - 1].v;
+    setNodes(nodes.slice(0, -1));
+    setStatus(`Removed ${removed} from TAIL. Walked to the second-to-last node, set its next to NULL. O(n).`);
+  };
+
+  const removeAt = () => {
+    const i = parseIdx();
+    if (i === null) { setStatus('Enter a position to remove.'); return; }
+    if (!nodes.length) { setStatus('Empty list.'); return; }
+    if (i < 0 || i >= nodes.length) {
+      setStatus(`Position ${i} out of range. Valid: 0 to ${nodes.length - 1}.`);
+      return;
+    }
+    let cur = 0;
+    const walk = () => {
+      if (cur >= i) {
+        const removed = nodes[i].v;
+        setNodes([...nodes.slice(0, i), ...nodes.slice(i + 1)]);
+        setHighlight(null);
+        if (i === 0) {
+          setStatus(`Removed ${removed} from position 0 (HEAD). O(1).`);
+        } else {
+          setStatus(`Walked ${i} step(s), then bypassed node ${i}: prev.next = removed.next. O(n).`);
+        }
+        setIndexVal('');
+        return;
+      }
+      setHighlight(cur);
+      cur++;
+      setTimeout(walk, 300);
+    };
+    walk();
+  };
+
+  const search = () => {
+    const target = parseInput();
+    if (target === null) {
+      setStatus('Enter a value to search for.');
+      return;
+    }
+    const idx = nodes.findIndex(n => String(n.v) === String(target));
+    if (idx < 0) {
+      setStatus(`${target} not found. Walked all ${nodes.length} node(s). O(n).`);
+      return;
+    }
+    let i = 0;
+    const walk = () => {
+      if (i > idx) {
+        setHighlight(null);
+        setStatus(`Found ${target} at position ${idx}. Visited ${idx + 1} node(s). O(n).`);
+        return;
+      }
+      setHighlight(i);
+      i++;
+      setTimeout(walk, 350);
+    };
+    walk();
+  };
+
+  const reset = () => {
+    setNodes([10, 20, 30].map(newLLNode));
+    setStatus('Reset to default list.');
+    setInputVal('');
+  };
+
+  return (
+    <div className="panel" style={{ '--accent': 'var(--linkedlist)', '--accent-glow': 'rgba(87, 227, 216, 0.22)' }}>
+      <div className="panel-header">
+        <div className="panel-title-block">
+          <div className="panel-eyebrow">03 / Linked List</div>
+          <h2 className="panel-title">A chain of <em>connected</em> nodes</h2>
+          <p className="panel-subtitle">
+            Each node stores a value and a pointer (<code style={{fontFamily:'var(--font-mono)', color:'var(--linkedlist)', background:'var(--bg-deep)', padding:'1px 6px', borderRadius:'3px'}}>next</code>) to the
+            next node. Memory is scattered — they're linked by reference, not by sitting next to each other.
+          </p>
+        </div>
+        <div className="panel-traits">
+          <div className="trait"><span className="trait-label">Order</span><span className="trait-value">sequential</span></div>
+          <div className="trait"><span className="trait-label">Insert</span><span className="trait-value">O(1) at head</span></div>
+          <div className="trait"><span className="trait-label">Search</span><span className="trait-value">O(n)</span></div>
+          <div className="trait"><span className="trait-label">Memory</span><span className="trait-value">non-contiguous</span></div>
+        </div>
+      </div>
+
+      <div className="stage">
+        {nodes.length === 0 ? (
+          <div className="empty-msg">HEAD → NULL  (empty list)</div>
+        ) : (
+          <div className="ll-row">
+            <div className="ll-null" style={{color:'var(--linkedlist)', fontWeight:600}}>HEAD →</div>
+            {nodes.map((node, i) => (
+              <React.Fragment key={node.id}>
+                <div className="ll-node-wrap">
+                  {i === 0 && <div className="ll-head-label">head</div>}
+                  {i === nodes.length - 1 && nodes.length > 1 && <div className="ll-tail-label">tail</div>}
+                  <div
+                    className={`ll-node anim-slide-in ${highlight === i ? 'highlight' : ''}`}
+                    style={highlight === i ? { borderColor:'var(--yellow)', background:'rgba(241,199,92,0.08)' } : {}}
+                  >
+                    <div className="ll-data">{node.v}</div>
+                    <div className="ll-pointer">●</div>
+                  </div>
+                </div>
+                <div className="ll-arrow arrow-grow">→</div>
+              </React.Fragment>
+            ))}
+            <div className="ll-null">NULL</div>
+          </div>
+        )}
+      </div>
+
+      <div className="controls">
+        <input
+          className="control-input"
+          placeholder="value..."
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value)}
+          style={{width: '90px'}}
+        />
+        <input
+          className="control-input"
+          placeholder="index..."
+          value={indexVal}
+          onChange={(e) => setIndexVal(e.target.value)}
+          style={{width: '85px'}}
+        />
+        <button className="btn" onClick={insertHead}>← Insert head</button>
+        <button className="btn" onClick={insertTail}>Insert tail →</button>
+        <button className="btn btn-primary" onClick={insertAt}>Insert at [i]</button>
+        <button className="btn btn-danger" onClick={removeHead}>Remove head</button>
+        <button className="btn btn-danger" onClick={removeTail}>Remove tail</button>
+        <button className="btn btn-danger" onClick={removeAt}>Remove at [i]</button>
+        <button className="btn" onClick={search}>Search</button>
+        <div className="control-spacer"></div>
+        <span className="control-meta">size <span>{nodes.length}</span></span>
+        <button className="btn" onClick={reset} title="Reset to initial state">↺ Reset</button>
+      </div>
+
+      <div className="status">
+        <span className="status-dot"></span>
+        {status}
+      </div>
+
+      <div className="explainer">
+        <div className="explain-card">
+          <h4>How it works</h4>
+          <p>
+            Each node is its own object. The list keeps only a reference to the
+            HEAD. To reach node #N, you must follow next pointers N times — there's
+            no random access like arrays.
+          </p>
+        </div>
+        <div className="explain-card">
+          <h4>Operations</h4>
+          <ul className="ops-list">
+            <li><code>prepend(v)</code>   O(1) — at head</li>
+            <li><code>append(v)</code>    O(n) — walk to end</li>
+            <li><code>insertAt(i,v)</code> O(n) — walk then insert</li>
+            <li><code>removeAt(i)</code>  O(n) — walk then bypass</li>
+            <li><code>search(v)</code>    O(n) — walk till found</li>
+          </ul>
+        </div>
+        <div className="explain-card">
+          <h4>Used for</h4>
+          <div className="uses-grid">
+            <span className="use-tag">undo history</span>
+            <span className="use-tag">music playlists</span>
+            <span className="use-tag">browser tabs</span>
+            <span className="use-tag">queues / stacks</span>
+            <span className="use-tag">memory allocators</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═════════════════════════════════════════════════
+   STACK  ─  Last In, First Out (LIFO)
+   ═════════════════════════════════════════════════ */
+let _stackId = 0;
+const newStackItem = (v) => ({ v, id: ++_stackId });
+
+function StackView() {
+  const [stack, setStack] = useState(() => [10, 20, 30].map(newStackItem));
+  const [inputVal, setInputVal] = useState('');
+  const [status, setStatus] = useState('Ready. Push values onto the stack — they pop off in reverse order.');
+  const [poppedValue, setPoppedValue] = useState(null);
+  const [flashTop, setFlashTop] = useState(false);
+  const [pushingId, setPushingId] = useState(null);     // id of newly pushed item
+  const [exitingItem, setExitingItem] = useState(null); // item being popped (kept visible)
+
+  const parseInput = () => {
+    const v = inputVal.trim();
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : v;
+  };
+
+  const push = () => {
+    const val = parseInput() ?? Math.floor(Math.random() * 90 + 10);
+    const item = newStackItem(val);
+    setStack([...stack, item]);
+    setPushingId(item.id);
+    setStatus(`Pushed ${val} onto the stack. It now sits on top. O(1).`);
+    setInputVal('');
+    setTimeout(() => setPushingId(null), 600);
+  };
+
+  const pop = () => {
+    if (!stack.length || exitingItem) {
+      if (!stack.length) setStatus('Stack is empty. Cannot pop.');
+      return;
+    }
+    const top = stack[stack.length - 1];
+    setExitingItem(top);
+    setStack(stack.slice(0, -1));
+    setPoppedValue(top.v);
+    setStatus(`Popped ${top.v} off the top — last in, first out. O(1).`);
+    setTimeout(() => {
+      setExitingItem(null);
+      setPoppedValue(null);
+    }, 600);
+  };
+
+  const peek = () => {
+    if (!stack.length) {
+      setStatus('Stack is empty. Nothing to peek at.');
+      return;
+    }
+    const top = stack[stack.length - 1].v;
+    setStatus(`Peek: the top is ${top} (without removing it). O(1).`);
+    setFlashTop(true);
+    setTimeout(() => setFlashTop(false), 600);
+  };
+
+  const reset = () => {
+    setStack([10, 20, 30].map(newStackItem));
+    setInputVal('');
+    setExitingItem(null);
+    setPushingId(null);
+    setStatus('Reset to default stack.');
+  };
+
+  return (
+    <div className="panel" style={{ '--accent': 'var(--stack)', '--accent-glow': 'rgba(245, 167, 106, 0.22)' }}>
+      <div className="panel-header">
+        <div className="panel-title-block">
+          <div className="panel-eyebrow">04 / Stack · LIFO</div>
+          <h2 className="panel-title">The <em>last</em> one in is the first one out</h2>
+          <p className="panel-subtitle">
+            Think of a stack of plates. You can only put a plate on top, and you
+            can only take a plate from the top. The last item pushed is the first
+            item popped.
+          </p>
+        </div>
+        <div className="panel-traits">
+          <div className="trait"><span className="trait-label">Order</span><span className="trait-value">LIFO</span></div>
+          <div className="trait"><span className="trait-label">Push</span><span className="trait-value">O(1)</span></div>
+          <div className="trait"><span className="trait-label">Pop</span><span className="trait-value">O(1)</span></div>
+          <div className="trait"><span className="trait-label">Access</span><span className="trait-value">top only</span></div>
+        </div>
+      </div>
+
+      <div className="stage">
+        {stack.length === 0 && !exitingItem ? (
+          <div className="empty-msg">[ empty stack ]</div>
+        ) : (
+          <div className="stack-frame">
+            {stack.map((item, i) => {
+              const isTop = i === stack.length - 1;
+              const isPushing = pushingId === item.id;
+              return (
+                <div
+                  key={item.id}
+                  className={`stack-item ${isPushing ? 'stack-push-in' : ''} ${isTop && flashTop ? 'highlight' : ''}`}
+                  style={isTop ? { borderColor: 'var(--yellow)', color: 'var(--yellow)' } : {}}
+                >
+                  {item.v}
+                </div>
+              );
+            })}
+            {exitingItem && (
+              <div
+                key={`exit-${exitingItem.id}`}
+                className="stack-item stack-pop-out"
+                style={{ borderColor: 'var(--yellow)', color: 'var(--yellow)' }}
+              >
+                {exitingItem.v}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="controls">
+        <input
+          className="control-input"
+          placeholder="value..."
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && push()}
+        />
+        <button className="btn btn-primary" onClick={push}>↑ Push</button>
+        <button className="btn btn-danger" onClick={pop}>↓ Pop</button>
+        <button className="btn" onClick={peek}>👁 Peek</button>
+        <div className="control-spacer"></div>
+        <span className="control-meta">size <span>{stack.length}</span></span>
+        {poppedValue !== null && (
+          <span className="control-meta" style={{color:'var(--stack)'}}>
+            popped → <span>{poppedValue}</span>
+          </span>
+        )}
+        <button className="btn" onClick={reset}>↺ Reset</button>
+      </div>
+
+      <div className="status">
+        <span className="status-dot"></span>
+        {status}
+      </div>
+
+      <div className="explainer">
+        <div className="explain-card">
+          <h4>How it works</h4>
+          <p>
+            Only one end is accessible: the TOP. Push adds there, pop removes
+            from there, peek looks without removing. Everything happens at the
+            same end, so all operations are O(1).
+          </p>
+        </div>
+        <div className="explain-card">
+          <h4>Operations</h4>
+          <ul className="ops-list">
+            <li><code>push(v)</code> add on top</li>
+            <li><code>pop()</code>   remove + return top</li>
+            <li><code>peek()</code>  look at top</li>
+            <li><code>isEmpty()</code> any items left?</li>
+          </ul>
+        </div>
+        <div className="explain-card">
+          <h4>Used for</h4>
+          <div className="uses-grid">
+            <span className="use-tag">function call stack</span>
+            <span className="use-tag">undo / redo</span>
+            <span className="use-tag">expression evaluation</span>
+            <span className="use-tag">DFS algorithms</span>
+            <span className="use-tag">browser back button</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═════════════════════════════════════════════════
+   QUEUE  ─  First In, First Out (FIFO)
+   ═════════════════════════════════════════════════ */
+let _queueId = 0;
+const newQueueItem = (v) => ({ v, id: ++_queueId });
+
+function QueueView() {
+  const [queue, setQueue] = useState(() => [10, 20, 30].map(newQueueItem));
+  const [inputVal, setInputVal] = useState('');
+  const [status, setStatus] = useState('Ready. Items enter at the rear and leave from the front.');
+  const [dequeuedValue, setDequeuedValue] = useState(null);
+  const [highlight, setHighlight] = useState(null);
+  const [enqueueingId, setEnqueueingId] = useState(null); // id of newly enqueued item
+  const [exitingFront, setExitingFront] = useState(null); // item being dequeued
+
+  const parseInput = () => {
+    const v = inputVal.trim();
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : v;
+  };
+
+  const enqueue = () => {
+    const val = parseInput() ?? Math.floor(Math.random() * 90 + 10);
+    const item = newQueueItem(val);
+    setQueue([...queue, item]);
+    setEnqueueingId(item.id);
+    setStatus(`Enqueued ${val} at the REAR. It will be served after all the others ahead of it. O(1).`);
+    setInputVal('');
+    setHighlight('rear');
+    setTimeout(() => {
+      setEnqueueingId(null);
+      setHighlight(null);
+    }, 700);
+  };
+
+  const dequeue = () => {
+    if (!queue.length || exitingFront) {
+      if (!queue.length) setStatus('Queue is empty. Cannot dequeue.');
+      return;
+    }
+    const front = queue[0];
+    setExitingFront(front);
+    setQueue(queue.slice(1));
+    setDequeuedValue(front.v);
+    setStatus(`Dequeued ${front.v} from the FRONT — first in, first out. O(1).`);
+    setTimeout(() => {
+      setExitingFront(null);
+      setDequeuedValue(null);
+    }, 650);
+    // briefly highlight the new front after exit
+    setTimeout(() => {
+      setHighlight('front');
+      setTimeout(() => setHighlight(null), 600);
+    }, 650);
+  };
+
+  const peekFront = () => {
+    if (!queue.length) {
+      setStatus('Queue is empty.');
+      return;
+    }
+    setStatus(`Front of queue: ${queue[0].v} (next to be served, without removing). O(1).`);
+    setHighlight('front');
+    setTimeout(() => setHighlight(null), 700);
+  };
+
+  const reset = () => {
+    setQueue([10, 20, 30].map(newQueueItem));
+    setInputVal('');
+    setExitingFront(null);
+    setEnqueueingId(null);
+    setStatus('Reset to default queue.');
+  };
+
+  return (
+    <div className="panel" style={{ '--accent': 'var(--queue)', '--accent-glow': 'rgba(167, 139, 250, 0.22)' }}>
+      <div className="panel-header">
+        <div className="panel-title-block">
+          <div className="panel-eyebrow">05 / Queue · FIFO</div>
+          <h2 className="panel-title">A <em>fair</em> line — first to arrive is first served</h2>
+          <p className="panel-subtitle">
+            Think of any real-world queue: a coffee line, a printer job queue,
+            a ticket counter. New people join at the back, the next person served
+            is always at the front.
+          </p>
+        </div>
+        <div className="panel-traits">
+          <div className="trait"><span className="trait-label">Order</span><span className="trait-value">FIFO</span></div>
+          <div className="trait"><span className="trait-label">Enqueue</span><span className="trait-value">O(1)</span></div>
+          <div className="trait"><span className="trait-label">Dequeue</span><span className="trait-value">O(1)</span></div>
+          <div className="trait"><span className="trait-label">Access</span><span className="trait-value">ends only</span></div>
+        </div>
+      </div>
+
+      <div className="stage">
+        {queue.length === 0 && !exitingFront ? (
+          <div className="empty-msg">[ empty queue ]</div>
+        ) : (
+          <div className="queue-container">
+            <div className={`queue-label-front ${highlight === 'front' ? 'highlight' : ''}`}>← FRONT</div>
+            <div className="queue-track">
+              {exitingFront && (
+                <div
+                  key={`exit-${exitingFront.id}`}
+                  className="queue-item queue-dequeue-out"
+                  style={{ borderColor: 'var(--yellow)', color: 'var(--yellow)' }}
+                >
+                  {exitingFront.v}
+                </div>
+              )}
+              {queue.map((item, i) => {
+                const isFront = i === 0;
+                const isRear = i === queue.length - 1;
+                const isEnqueueing = enqueueingId === item.id;
+                const isHighlighted = (highlight === 'front' && isFront) || (highlight === 'rear' && isRear);
+                return (
+                  <div
+                    key={item.id}
+                    className={`queue-item ${isEnqueueing ? 'queue-enqueue-in' : ''} ${isHighlighted ? 'highlight' : ''}`}
+                    style={isHighlighted ? { borderColor: 'var(--yellow)', color: 'var(--yellow)' } : {}}
+                  >
+                    {item.v}
+                  </div>
+                );
+              })}
+            </div>
+            <div className={`queue-label-rear ${highlight === 'rear' ? 'highlight' : ''}`}>REAR ←</div>
+          </div>
+        )}
+      </div>
+
+      <div className="controls">
+        <input
+          className="control-input"
+          placeholder="value..."
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && enqueue()}
+        />
+        <button className="btn btn-primary" onClick={enqueue}>← Enqueue</button>
+        <button className="btn btn-danger" onClick={dequeue}>Dequeue →</button>
+        <button className="btn" onClick={peekFront}>👁 Front</button>
+        <div className="control-spacer"></div>
+        <span className="control-meta">size <span>{queue.length}</span></span>
+        {dequeuedValue !== null && (
+          <span className="control-meta" style={{color:'var(--queue)'}}>
+            served → <span>{dequeuedValue}</span>
+          </span>
+        )}
+        <button className="btn" onClick={reset}>↺ Reset</button>
+      </div>
+
+      <div className="status">
+        <span className="status-dot"></span>
+        {status}
+      </div>
+
+      <div className="explainer">
+        <div className="explain-card">
+          <h4>How it works</h4>
+          <p>
+            Two access points: FRONT (for removing) and REAR (for adding). Items
+            move through the queue in order. It's the opposite of a stack — first
+            in is first out, never the other way.
+          </p>
+        </div>
+        <div className="explain-card">
+          <h4>Operations</h4>
+          <ul className="ops-list">
+            <li><code>enqueue(v)</code> add at rear</li>
+            <li><code>dequeue()</code>  remove + return front</li>
+            <li><code>peek()</code>     look at front</li>
+            <li><code>isEmpty()</code>  any items left?</li>
+          </ul>
+        </div>
+        <div className="explain-card">
+          <h4>Used for</h4>
+          <div className="uses-grid">
+            <span className="use-tag">print job queue</span>
+            <span className="use-tag">CPU scheduling</span>
+            <span className="use-tag">BFS algorithms</span>
+            <span className="use-tag">message brokers</span>
+            <span className="use-tag">request handlers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ═════════════════════════════════════════════════
+   APP shell
+   ═════════════════════════════════════════════════ */
+function App() {
+  const [tab, setTab] = useState('array');
+
+  const tabs = [
+    { id: 'array',      label: 'Array',       color: 'var(--array)' },
+    { id: 'array2d',    label: '2D Array',    color: 'var(--array2d)' },
+    { id: 'linkedlist', label: 'Linked List', color: 'var(--linkedlist)' },
+    { id: 'stack',      label: 'Stack',       color: 'var(--stack)' },
+    { id: 'queue',      label: 'Queue',       color: 'var(--queue)' },
+  ];
+
+  return (
+    <div className="container">
+      <header className="header">
+        <h1 className="header-title">
+          <em>Five</em> ways to hold<br />a collection.
+        </h1>
+        <div className="header-meta">
+          <div>Foundation Bootcamp</div>
+          <div><strong>Week 4 · Data Structures</strong></div>
+          <div>Interactive playground</div>
+        </div>
+      </header>
+
+      <nav className="tabs">
+        {tabs.map((t, i) => (
+          <button
+            key={t.id}
+            className={`tab ${tab === t.id ? 'active' : ''}`}
+            style={{ '--accent': t.color, color: tab === t.id ? t.color : undefined }}
+            onClick={() => setTab(t.id)}
+          >
+            <span className="tab-num">0{i + 1}</span>
+            {t.label}
+          </button>
+        ))}
+      </nav>
+
+      {tab === 'array'      && <ArrayView />}
+      {tab === 'array2d'    && <Array2DView />}
+      {tab === 'linkedlist' && <LinkedListView />}
+      {tab === 'stack'      && <StackView />}
+      {tab === 'queue'      && <QueueView />}
+
+      <footer className="footer">
+        <div className="footer-divider"></div>
+        Tuwaiq Academy · Programming Track · Built for learning
+      </footer>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
