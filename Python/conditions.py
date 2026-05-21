@@ -31,6 +31,11 @@ elif age >= 12:
     print ("Teenager")
 else: 
     print ("Child")
+    
+    
+    
+    
+    
 
 
 

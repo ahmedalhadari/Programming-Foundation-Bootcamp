@@ -1,0 +1,32 @@
+Login System with Attempt Limit
+A login screen allows up to 3 password attempts. The correct password is "1234".
+Ask the user to type a password each time (using input()). Then:
+If the password is correct, print "Access granted on attempt N" (where N is the attempt number) and stop.
+If the password is wrong and it's not the last attempt, print "Wrong password, try again" and let the user try again.
+After 3 wrong attempts, print "Account locked" and stop.
+Use a loop, a counter, and conditions.
+Example run:
+Enter password (attempt 1): 0000
+Wrong password, try again
+Enter password (attempt 2): 1111
+Wrong password, try again
+Enter password (attempt 3): 1234
+Access granted on attempt 3
+
+
+
+
+correct_pw = "1234"
+max_tries = 3
+
+for attempt_number in range(1, max_tries + 1):
+    pw = input(f"Enter password (attempt {attempt_number}): ")
+
+    if pw == correct_pw:
+        print(f"Access granted on attempt {attempt_number}")
+        break
+    else:
+        if attempt_number == max_tries:
+            print("Account locked")
+        else:
+            print("Wrong password, try again")
