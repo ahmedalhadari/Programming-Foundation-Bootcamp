@@ -191,9 +191,10 @@ def triple(x): return x*3
 # # triple(5)
 # # 5(5)
 
+# def double(x): return x*2
+# # Pass a function as argument 
+# def apply (func, value):
+#     return func(value)
 
-# Pass a function as argument 
-def apply (func, value):
-    return func(value)
 
-print (apply(double, 5))
+# print (apply(double, 5))
