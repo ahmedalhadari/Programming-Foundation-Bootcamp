@@ -35,16 +35,18 @@
 
 # Overriding methods - replace parent's method version
 
-# class Animal:
-#     def __init__(self, name):
-#         self.name = name
-#     def speak(self):
-#         print (f"{self.name} makes a sound ")
+class Animal:
+    def __init__(self, name):
+        self.name = name
+    def speak(self):
+        print (f"{self.name} makes a sound ")
 
-# class Dog(Animal):
-#     def speak(self):
-#         print (f"{self.name} syas: Woof!")
+class Dog(Animal):
+    def speak(self):
+        print (f"{self.name} syas: Woof!")
 
+dog1 = Dog("Doggy")
+dog1.speak()
 # class Cat(Animal):
 #     def speak(self):
 #         print (f"{self.name} syas: Meow!")
@@ -70,19 +72,19 @@
 
 # Multi-level Inheritance
 
-class Vehicle:
-    def __init__(self, wheels):
-        self.wheels = wheels
+# class Vehicle:
+#     def __init__(self, wheels):
+#         self.wheels = wheels
 
-class Car(Vehicle):
-    def __init__(self, brand):
-        super().__init__(4)
-        self.brand = brand
+# class Car(Vehicle):
+#     def __init__(self, brand):
+#         super().__init__(4)
+#         self.brand = brand
 
-class ElectricCar(Car):
-    def __init__(self, brand, battery):
-        super().__init__(brand)
-        self.battery = battery
+# class ElectricCar(Car):
+#     def __init__(self, brand, battery):
+#         super().__init__(brand)
+#         self.battery = battery
         
-ec = ElectricCar("Tesla", 75)
-print (ec.wheels, ec.brand, ec.battery)
+# ec = ElectricCar("Tesla", 75)
+# print (ec.wheels, ec.brand, ec.battery)
