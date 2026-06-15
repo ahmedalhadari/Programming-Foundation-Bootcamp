@@ -1,0 +1,786 @@
+================================================================================
+                  SQLITE — COMPLETE BEGINNER REFERENCE
+              Tuwaiq Foundation Bootcamp · Programming Track
+================================================================================
+
+  In this guide you will learn:
+       • How to install and start SQLite
+       • Dot commands for exploring databases
+       • Data types in SQLite
+       • Creating databases and tables
+       • Primary keys and foreign keys
+       • Inserting, selecting, updating, deleting rows
+       • WHERE, ORDER BY, LIMIT, DISTINCT, LIKE, IN, BETWEEN
+       • Aggregate functions: COUNT, SUM, AVG, MIN, MAX
+       • GROUP BY and HAVING
+       • INNER, LEFT, and CROSS JOIN
+       • Modifying tables (ALTER, DROP)
+       • Common mistakes to avoid
+
+  KEYWORD CONVENTION
+       SQL keywords are written in UPPERCASE (SELECT, FROM, WHERE).
+       Table and column names are written in lowercase.
+       SQL is NOT case-sensitive — uppercase is just a readability habit.
+
+  EVERY STATEMENT ENDS WITH A SEMICOLON  ;
+
+
+================================================================================
+1. WHAT IS SQLITE?
+================================================================================
+
+  SQLite is a small, fast, self-contained database engine.
+  Unlike MySQL or PostgreSQL, SQLite does NOT run as a separate server —
+  the entire database is stored in a single file (e.g. school.db).
+
+  Best for:
+       • Learning SQL
+       • Mobile apps (it's the database inside iPhone and Android apps!)
+       • Small to medium applications
+       • Local data storage
+
+  Not great for:
+       • Hundreds of users writing at the same time
+       • Very large multi-server systems
+
+
+================================================================================
+2. INSTALLING SQLITE
+================================================================================
+
+  WINDOWS
+       1. Go to  https://sqlite.org/download.html
+       2. Download "sqlite-tools-win-x64-*.zip"
+       3. Extract it to  C:\sqlite
+       4. Add C:\sqlite to your PATH environment variable.
+       5. Open Command Prompt and type:
+                 sqlite3 --version
+
+  macOS
+       SQLite is pre-installed. Just open Terminal and type:
+                 sqlite3 --version
+       (To upgrade: brew install sqlite)
+
+  LINUX (Ubuntu / Debian)
+       sudo apt update
+       sudo apt install sqlite3
+       sqlite3 --version
+
+  OPTIONAL GUI (recommended for beginners)
+       DB Browser for SQLite — a free visual tool.
+       Download from  https://sqlitebrowser.org
+
+
+================================================================================
+3. STARTING AND EXITING SQLITE
+================================================================================
+
+  OPEN A NEW (OR EXISTING) DATABASE FILE
+       sqlite3 school.db
+       (If school.db doesn't exist, SQLite will create it.)
+
+  OPEN WITHOUT A FILE (in-memory, lost when you exit)
+       sqlite3
+
+  EXIT
+       .exit       ← preferred
+       .quit       ← also works
+       Ctrl + D    ← also works
+
+
+================================================================================
+4. DOT COMMANDS (EXPLORE A DATABASE)
+================================================================================
+
+  Dot commands start with a period and DO NOT need a semicolon.
+  They control SQLite itself, not the data.
+
+       .help                 Show all dot commands
+       .databases            List attached databases (and their file paths)
+       .tables               List all tables in the database
+       .schema               Show the CREATE statement for all tables
+       .schema students      Show the CREATE statement for the students table
+       .headers on           Show column names above query results
+       .mode column          Pretty column layout (try also: csv, box, table)
+       .width 15 20 5        Set column widths for column mode
+       .read script.sql      Run all commands from a .sql file
+       .dump                 Print every command needed to rebuild the DB
+       .open mydata.db       Open a different database file
+       .cd /path/to/folder   Change working directory
+       .exit                 Quit SQLite
+
+  RECOMMENDED STARTUP COMMANDS  (run these every time you open SQLite):
+       .headers on
+       .mode column
+
+
+================================================================================
+5. SQLITE DATA TYPES
+================================================================================
+
+  SQLite has only FIVE storage classes:
+
+       INTEGER     Whole numbers      → 1, 42, -7, 1000
+       REAL        Decimal numbers    → 3.14, 99.5, -0.01
+       TEXT        Strings            → 'Sara', 'Riyadh'
+       BLOB        Binary data        → images, files
+       NULL        Missing / empty value
+
+  When you create columns you often see these "type names" — they all map
+  to the five classes above:
+
+       INT, INTEGER, BIGINT             →  INTEGER
+       REAL, DOUBLE, FLOAT              →  REAL
+       TEXT, VARCHAR(50), CHAR(20)      →  TEXT
+       NUMERIC, DECIMAL(10,2), BOOLEAN  →  NUMERIC
+       BLOB                              →  BLOB
+
+  NOTE: SQLite is FLEXIBLE about types — you can store text in a number
+  column. But sticking to the right type is good practice.
+
+
+================================================================================
+6. CREATING A DATABASE
+================================================================================
+
+  A SQLite database is just a file. To create one:
+
+       sqlite3 school.db
+
+  That's it. The file is created the first time you save a table to it.
+
+  To delete a database — close SQLite and delete the .db file from disk.
+
+
+================================================================================
+7. CREATING TABLES
+================================================================================
+
+  SYNTAX
+       CREATE TABLE table_name (
+            column_name  data_type   constraints,
+            column_name  data_type   constraints,
+            ...
+       );
+
+  BASIC EXAMPLE
+       CREATE TABLE students (
+            student_id   INTEGER PRIMARY KEY,
+            name         TEXT NOT NULL,
+            age          INTEGER,
+            city         TEXT DEFAULT 'Riyadh',
+            gpa          REAL
+       );
+
+  COMMON COLUMN CONSTRAINTS
+       PRIMARY KEY        Identifies the row uniquely
+       NOT NULL           Value is required, cannot be empty
+       UNIQUE             No two rows can have the same value
+       DEFAULT value      Used if no value is given on insert
+       CHECK (condition)  Custom rule that must be true
+
+  CHECK EXAMPLE
+       CREATE TABLE students (
+            student_id  INTEGER PRIMARY KEY,
+            name        TEXT NOT NULL,
+            age         INTEGER CHECK (age >= 16),
+            gpa         REAL    CHECK (gpa BETWEEN 0 AND 5)
+       );
+
+  AVOID ERRORS IF TABLE ALREADY EXISTS
+       CREATE TABLE IF NOT EXISTS students ( ... );
+
+
+================================================================================
+8. PRIMARY KEYS
+================================================================================
+
+  A primary key uniquely identifies each row. Every table should have one.
+
+  SIMPLE PRIMARY KEY
+       student_id INTEGER PRIMARY KEY
+
+  AUTO-INCREMENTING ID
+       SQLite gives INTEGER PRIMARY KEY columns an automatic value if you
+       don't provide one — no AUTOINCREMENT keyword needed.
+
+       INSERT INTO students (name, age) VALUES ('Sara', 19);
+       -- student_id is auto-assigned (1, 2, 3, …)
+
+  EXPLICIT AUTOINCREMENT (rarely needed)
+       student_id INTEGER PRIMARY KEY AUTOINCREMENT
+       -- Prevents reusing IDs of deleted rows. Slightly slower.
+
+  COMPOSITE PRIMARY KEY  (key made of more than one column)
+       CREATE TABLE enrollments (
+            student_id  INTEGER,
+            course_id   INTEGER,
+            grade       INTEGER,
+            PRIMARY KEY (student_id, course_id)
+       );
+
+
+================================================================================
+9. FOREIGN KEYS  (linking tables together)
+================================================================================
+
+  A foreign key in one table refers to the primary key of another table.
+  It enforces a real relationship between rows.
+
+  IMPORTANT — SQLite has foreign keys OFF by default. Turn them on EVERY
+  time you open the database:
+
+       PRAGMA foreign_keys = ON;
+
+  EXAMPLE — three related tables
+
+       CREATE TABLE students (
+            student_id  INTEGER PRIMARY KEY,
+            name        TEXT NOT NULL
+       );
+
+       CREATE TABLE courses (
+            course_id    INTEGER PRIMARY KEY,
+            course_name  TEXT NOT NULL,
+            credits      INTEGER
+       );
+
+       CREATE TABLE enrollments (
+            student_id  INTEGER,
+            course_id   INTEGER,
+            grade       INTEGER,
+            PRIMARY KEY (student_id, course_id),
+            FOREIGN KEY (student_id) REFERENCES students(student_id),
+            FOREIGN KEY (course_id)  REFERENCES courses(course_id)
+       );
+
+  CASCADE OPTIONS  (what happens when a referenced row is deleted/updated)
+       FOREIGN KEY (student_id) REFERENCES students(student_id)
+            ON DELETE CASCADE          -- delete enrollments when student is deleted
+            ON UPDATE CASCADE          -- update enrollment IDs if student_id changes
+
+  OTHER OPTIONS
+       ON DELETE SET NULL    Set the foreign key to NULL
+       ON DELETE RESTRICT    Block the delete if there are children
+       ON DELETE NO ACTION   (default) Same as RESTRICT in SQLite
+
+
+================================================================================
+10. INSERTING ROWS
+================================================================================
+
+  SYNTAX
+       INSERT INTO table_name (col1, col2, col3) VALUES (val1, val2, val3);
+
+  EXAMPLES
+       INSERT INTO students (name, age, city, gpa)
+       VALUES ('Sara', 19, 'Riyadh', 4.2);
+
+       INSERT INTO students (name, age, city, gpa)
+       VALUES ('Omar', 20, 'Jeddah', 3.8);
+
+  INSERT MULTIPLE ROWS AT ONCE
+       INSERT INTO students (name, age, city, gpa) VALUES
+            ('Fatima', 18, 'Riyadh',  4.7),
+            ('Khalid', 21, 'Dammam',  3.5),
+            ('Ahmed',  20, 'Mecca',   3.9),
+            ('Reem',   19, 'Madinah', 4.1);
+
+  INSERT WITHOUT NAMING COLUMNS  (you must give values in order!)
+       INSERT INTO students VALUES (NULL, 'Layla', 22, 'Riyadh', 3.6);
+       -- NULL for student_id lets SQLite auto-generate it
+
+  INSERT WITH DEFAULT VALUE
+       INSERT INTO students (name, age) VALUES ('Yara', 19);
+       -- city defaults to 'Riyadh', gpa stays NULL
+
+
+================================================================================
+11. SELECTING DATA  (SELECT)
+================================================================================
+
+  SELECT ALL COLUMNS
+       SELECT * FROM students;
+
+  SELECT SPECIFIC COLUMNS
+       SELECT name, gpa FROM students;
+
+  COLUMN ALIASES  (rename in the output)
+       SELECT name AS student_name, gpa AS grade_point FROM students;
+
+  ARITHMETIC IN SELECT
+       SELECT name, gpa, gpa * 25 AS percent FROM students;
+
+  CONCATENATING TEXT  (use ||)
+       SELECT name || ' from ' || city AS info FROM students;
+
+  REMOVING DUPLICATES
+       SELECT DISTINCT city FROM students;
+       -- shows each city only once
+
+
+================================================================================
+12. FILTERING WITH WHERE
+================================================================================
+
+  COMPARISON OPERATORS
+       =      equal
+       !=     not equal   (also <>)
+       >=    greater or equal
+       <=    less or equal
+
+  EXAMPLES
+       SELECT * FROM students WHERE city = 'Riyadh';
+       SELECT * FROM students WHERE gpa >= 4.0;
+       SELECT * FROM students WHERE age != 20;
+
+  LOGICAL OPERATORS  (AND, OR, NOT)
+       SELECT * FROM students WHERE city = 'Riyadh' AND gpa >= 4.0;
+       SELECT * FROM students WHERE city = 'Riyadh' OR  city = 'Jeddah';
+       SELECT * FROM students WHERE NOT city = 'Dammam';
+
+  RANGE — BETWEEN
+       SELECT * FROM students WHERE age BETWEEN 18 AND 20;
+       -- inclusive on both ends
+
+  LIST MEMBERSHIP — IN
+       SELECT * FROM students WHERE city IN ('Riyadh', 'Jeddah', 'Mecca');
+       SELECT * FROM students WHERE city NOT IN ('Dammam');
+
+  PATTERN MATCHING — LIKE
+       %    matches any number of characters
+       _    matches exactly one character
+
+       SELECT * FROM students WHERE name LIKE 'S%';      -- starts with S
+       SELECT * FROM students WHERE name LIKE '%a';      -- ends with a
+       SELECT * FROM students WHERE name LIKE '%am%';    -- contains "am"
+       SELECT * FROM students WHERE name LIKE '_ara';    -- 4 letters ending "ara"
+
+  NULL VALUES (missing data) — special operators
+       SELECT * FROM students WHERE gpa IS NULL;
+       SELECT * FROM students WHERE gpa IS NOT NULL;
+       -- ⚠ Do NOT use = NULL or != NULL — they never match anything!
+
+
+================================================================================
+13. SORTING WITH ORDER BY
+================================================================================
+
+  ASCENDING (default)
+       SELECT * FROM students ORDER BY gpa;
+
+  DESCENDING
+       SELECT * FROM students ORDER BY gpa DESC;
+
+  MULTI-COLUMN SORT
+       SELECT * FROM students ORDER BY city ASC, gpa DESC;
+       -- city A→Z, then highest GPA first inside each city
+
+
+================================================================================
+14. LIMITING RESULTS
+================================================================================
+
+  TOP 3 STUDENTS BY GPA
+       SELECT * FROM students ORDER BY gpa DESC LIMIT 3;
+
+  SKIP THE FIRST 5, THEN TAKE 10  (pagination)
+       SELECT * FROM students ORDER BY name LIMIT 10 OFFSET 5;
+
+
+================================================================================
+15. UPDATING ROWS
+================================================================================
+
+  SYNTAX
+       UPDATE table_name
+       SET    col1 = value1, col2 = value2
+       WHERE  condition;
+
+  ⚠ ALWAYS USE A WHERE CLAUSE — without it, EVERY row is updated.
+
+  EXAMPLES
+       UPDATE students SET gpa = 4.5 WHERE student_id = 1;
+
+       UPDATE students
+       SET    city = 'Riyadh', age = age + 1
+       WHERE  student_id = 3;
+
+       UPDATE students SET gpa = gpa + 0.1 WHERE city = 'Riyadh';
+       -- raise GPA by 0.1 for every Riyadh student
+
+
+================================================================================
+16. DELETING ROWS
+================================================================================
+
+  SYNTAX
+       DELETE FROM table_name WHERE condition;
+
+  ⚠ AGAIN — always use WHERE. No WHERE = delete ALL rows.
+
+  EXAMPLES
+       DELETE FROM students WHERE student_id = 5;
+       DELETE FROM students WHERE gpa < 2.0;
+       DELETE FROM students WHERE city = 'Riyadh' AND age > 25;
+
+  DELETE EVERY ROW (but keep the table itself)
+       DELETE FROM students;
+
+
+================================================================================
+17. AGGREGATE FUNCTIONS
+================================================================================
+
+  Aggregate functions compute a single value across many rows.
+
+  COUNT — how many rows
+       SELECT COUNT(*) FROM students;
+       SELECT COUNT(gpa) FROM students;        -- skips NULL values
+       SELECT COUNT(DISTINCT city) FROM students;
+
+  SUM — total
+       SELECT SUM(gpa) FROM students;
+
+  AVG — average
+       SELECT AVG(gpa) FROM students;
+       SELECT ROUND(AVG(gpa), 2) AS avg_gpa FROM students;
+
+  MIN / MAX — smallest / largest
+       SELECT MIN(gpa), MAX(gpa) FROM students;
+       SELECT MIN(age), MAX(age) FROM students;
+
+  COMBINED
+       SELECT
+            COUNT(*)        AS total_students,
+            ROUND(AVG(gpa),2) AS avg_gpa,
+            MIN(gpa)        AS lowest,
+            MAX(gpa)        AS highest
+       FROM students;
+
+
+================================================================================
+18. GROUP BY  (aggregate per category)
+================================================================================
+
+  SYNTAX
+       SELECT  column, AGG(other_column)
+       FROM    table
+       GROUP BY column;
+
+  EXAMPLES
+       -- Number of students per city
+       SELECT city, COUNT(*) AS total
+       FROM   students
+       GROUP BY city;
+
+       -- Average GPA per city
+       SELECT city, ROUND(AVG(gpa), 2) AS avg_gpa
+       FROM   students
+       GROUP BY city;
+
+       -- Highest GPA in each city
+       SELECT city, MAX(gpa) AS top_gpa
+       FROM   students
+       GROUP BY city;
+
+  HAVING — filter AFTER grouping
+       (WHERE filters individual rows; HAVING filters groups.)
+
+       -- Only show cities with more than 2 students
+       SELECT city, COUNT(*) AS total
+       FROM   students
+       GROUP BY city
+       HAVING COUNT(*) > 2;
+
+       -- Only cities whose average GPA is above 4.0
+       SELECT city, AVG(gpa) AS avg_gpa
+       FROM   students
+       GROUP BY city
+       HAVING AVG(gpa) > 4.0;
+
+
+================================================================================
+19. JOINS  (combining tables)
+================================================================================
+
+  Setup tables we will join (assume these are filled with data):
+
+       students     (student_id, name, ...)
+       courses      (course_id, course_name, credits)
+       enrollments  (student_id, course_id, grade)
+
+
+  INNER JOIN — only matching rows from BOTH tables
+
+       SELECT  s.name, c.course_name, e.grade
+       FROM    enrollments e
+       JOIN    students s  ON e.student_id = s.student_id
+       JOIN    courses  c  ON e.course_id  = c.course_id;
+
+       -- 'e', 's', 'c' are table aliases — they make the query short.
+
+
+  LEFT JOIN — every row from the left table, even if no match on the right
+
+       SELECT s.name, e.course_id
+       FROM   students s
+       LEFT JOIN enrollments e ON s.student_id = e.student_id;
+       -- Students with NO enrollments will show NULL in course_id.
+
+
+  RIGHT JOIN — SQLite supports it since version 3.39 (2022)
+  Same idea as LEFT JOIN but the other way around.
+       SELECT *
+       FROM   enrollments e
+       RIGHT JOIN students s ON e.student_id = s.student_id;
+
+
+  CROSS JOIN — every combination (Cartesian product)
+       SELECT s.name, c.course_name
+       FROM   students s
+       CROSS JOIN courses c;
+       -- 5 students × 10 courses = 50 rows.
+
+
+  JOIN + GROUP BY example — average grade per course
+       SELECT  c.course_name, ROUND(AVG(e.grade), 2) AS avg_grade
+       FROM    enrollments e
+       JOIN    courses c ON e.course_id = c.course_id
+       GROUP BY c.course_name;
+
+
+  JOIN + WHERE example — Sara's courses
+       SELECT  c.course_name, e.grade
+       FROM    enrollments e
+       JOIN    students s ON e.student_id = s.student_id
+       JOIN    courses  c ON e.course_id  = c.course_id
+       WHERE   s.name = 'Sara';
+
+
+================================================================================
+20. ALTERING AND DROPPING TABLES
+================================================================================
+
+  ADD A NEW COLUMN
+       ALTER TABLE students ADD COLUMN phone TEXT;
+
+  RENAME A COLUMN  (SQLite 3.25+)
+       ALTER TABLE students RENAME COLUMN gpa TO grade_point_avg;
+
+  RENAME A TABLE
+       ALTER TABLE students RENAME TO learners;
+
+  DROP A COLUMN  (SQLite 3.35+)
+       ALTER TABLE students DROP COLUMN phone;
+
+  DELETE AN ENTIRE TABLE
+       DROP TABLE enrollments;
+
+  DELETE ONLY IF IT EXISTS
+       DROP TABLE IF EXISTS enrollments;
+
+
+================================================================================
+21. WRITING COMMENTS IN SQL
+================================================================================
+
+  Single-line comment:
+       -- This is a comment, SQLite ignores this line
+
+  Multi-line comment:
+       /* This is a
+          multi-line comment */
+
+
+================================================================================
+22. A FULL WORKING EXAMPLE  (copy this whole block into SQLite to try)
+================================================================================
+
+  -- 1. Open the database
+  --    sqlite3 school.db
+
+  -- 2. Make sure foreign keys are enforced
+  PRAGMA foreign_keys = ON;
+
+  -- 3. Create tables
+  CREATE TABLE IF NOT EXISTS students (
+       student_id INTEGER PRIMARY KEY,
+       name       TEXT NOT NULL,
+       age        INTEGER CHECK (age >= 16),
+       city       TEXT DEFAULT 'Riyadh',
+       gpa        REAL CHECK (gpa BETWEEN 0 AND 5)
+  );
+
+  CREATE TABLE IF NOT EXISTS courses (
+       course_id   INTEGER PRIMARY KEY,
+       course_name TEXT NOT NULL UNIQUE,
+       credits     INTEGER DEFAULT 3
+  );
+
+  CREATE TABLE IF NOT EXISTS enrollments (
+       student_id INTEGER,
+       course_id  INTEGER,
+       grade      INTEGER CHECK (grade BETWEEN 0 AND 100),
+       PRIMARY KEY (student_id, course_id),
+       FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+       FOREIGN KEY (course_id)  REFERENCES courses(course_id)  ON DELETE CASCADE
+  );
+
+  -- 4. Insert students
+  INSERT INTO students (name, age, city, gpa) VALUES
+       ('Sara',   19, 'Riyadh',  4.2),
+       ('Omar',   20, 'Jeddah',  3.8),
+       ('Fatima', 18, 'Riyadh',  4.7),
+       ('Khalid', 21, 'Dammam',  3.5),
+       ('Ahmed',  20, 'Mecca',   3.9),
+       ('Reem',   19, 'Madinah', 4.1);
+
+  -- 5. Insert courses
+  INSERT INTO courses (course_name, credits) VALUES
+       ('Python',        3),
+       ('Databases',     4),
+       ('Web Dev',       3),
+       ('Algorithms',    4);
+
+  -- 6. Insert enrollments  (which student took which course, and the grade)
+  INSERT INTO enrollments (student_id, course_id, grade) VALUES
+       (1, 1, 95), (1, 2, 88),
+       (2, 1, 72), (2, 3, 80),
+       (3, 1, 98), (3, 2, 91), (3, 4, 89),
+       (4, 3, 70),
+       (5, 2, 85), (5, 4, 78),
+       (6, 1, 90), (6, 4, 82);
+
+  -- 7. EXPLORE the data
+  SELECT * FROM students;
+  SELECT * FROM courses;
+  SELECT * FROM enrollments;
+
+  -- 8. Students from Riyadh, sorted by GPA
+  SELECT name, gpa FROM students
+  WHERE  city = 'Riyadh'
+  ORDER BY gpa DESC;
+
+  -- 9. How many students per city
+  SELECT city, COUNT(*) AS total
+  FROM   students
+  GROUP BY city;
+
+  -- 10. Average grade per course (JOIN + GROUP BY)
+  SELECT  c.course_name, ROUND(AVG(e.grade), 2) AS avg_grade
+  FROM    enrollments e
+  JOIN    courses c ON e.course_id = c.course_id
+  GROUP BY c.course_name;
+
+  -- 11. Show every student with the courses they took
+  SELECT  s.name, c.course_name, e.grade
+  FROM    enrollments e
+  JOIN    students s ON e.student_id = s.student_id
+  JOIN    courses  c ON e.course_id  = c.course_id
+  ORDER BY s.name;
+
+  -- 12. Top grade ever recorded
+  SELECT MAX(grade) AS top_grade FROM enrollments;
+
+  -- 13. Update Khalid's GPA
+  UPDATE students SET gpa = 3.7 WHERE name = 'Khalid';
+
+  -- 14. Delete enrollments where the grade is below 75
+  DELETE FROM enrollments WHERE grade < 75;
+
+
+================================================================================
+23. USEFUL EXTRAS
+================================================================================
+
+  ROUND A DECIMAL
+       SELECT ROUND(AVG(gpa), 2) FROM students;
+
+  UPPER / LOWER CASE
+       SELECT UPPER(name), LOWER(city) FROM students;
+
+  STRING LENGTH
+       SELECT name, LENGTH(name) FROM students;
+
+  CURRENT DATE / TIME
+       SELECT DATE('now'), TIME('now'), DATETIME('now');
+
+  CASE WHEN  (like an if/else inside SQL)
+       SELECT name, gpa,
+              CASE
+                   WHEN gpa >= 4.5 THEN 'Excellent'
+                   WHEN gpa >= 3.5 THEN 'Good'
+                   WHEN gpa >= 2.5 THEN 'Average'
+                   ELSE 'Needs Improvement'
+              END AS performance
+       FROM students;
+
+  IFNULL — provide a default when a value is NULL
+       SELECT name, IFNULL(gpa, 0) AS gpa_or_zero FROM students;
+
+
+================================================================================
+24. COMMON MISTAKES TO AVOID
+================================================================================
+
+  ✗ Forgetting the semicolon at the end of a statement
+       (SQLite waits forever for it — you'll see a `...>` prompt.)
+
+  ✗ Forgetting WHERE in UPDATE / DELETE
+       UPDATE students SET gpa = 0;        -- wipes EVERY student's GPA!
+       DELETE FROM students;               -- deletes EVERY student!
+
+  ✗ Using = NULL instead of IS NULL
+       WHERE gpa = NULL              ← wrong, matches nothing
+       WHERE gpa IS NULL             ← correct
+
+  ✗ Forgetting to enable foreign keys
+       PRAGMA foreign_keys = ON;     ← run this in every new SQLite session
+
+  ✗ Using single quotes for column names
+       SELECT 'name' FROM students;  ← returns the literal string 'name'
+       SELECT  name  FROM students;  ← returns the actual column
+
+  ✗ Mixing up WHERE and HAVING
+       WHERE  → filters rows BEFORE grouping
+       HAVING → filters groups AFTER GROUP BY
+
+  ✗ Mixing aggregate and non-aggregate columns without GROUP BY
+       SELECT city, COUNT(*) FROM students;          ← can give weird results
+       SELECT city, COUNT(*) FROM students GROUP BY city;  ← correct
+
+
+================================================================================
+25. QUICK CHEAT SHEET
+================================================================================
+
+  Start          sqlite3 school.db
+  Exit           .exit
+  Pretty output  .headers on   .mode column
+  List tables    .tables
+  See schema     .schema [tablename]
+  Foreign keys   PRAGMA foreign_keys = ON;
+
+  Create table   CREATE TABLE name (col TYPE constraints, ...);
+  Drop table     DROP TABLE name;
+  Add column     ALTER TABLE name ADD COLUMN col TYPE;
+
+  Insert         INSERT INTO name (cols) VALUES (vals);
+  Select         SELECT cols FROM name WHERE cond ORDER BY col LIMIT n;
+  Update         UPDATE name SET col = val WHERE cond;
+  Delete         DELETE FROM name WHERE cond;
+
+  Filter         WHERE col = val / >= / != / IN / BETWEEN / LIKE / IS NULL
+  Aggregate      COUNT, SUM, AVG, MIN, MAX
+  Group          GROUP BY col   HAVING aggregate_condition
+  Join           JOIN other ON name.id = other.id
+                 LEFT JOIN, CROSS JOIN
+  Sort           ORDER BY col ASC|DESC
+  Unique         SELECT DISTINCT col FROM name;
+  Limit          LIMIT n OFFSET m
+
+
+================================================================================
+                                  END OF FILE
+================================================================================
