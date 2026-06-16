@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %} Add New Student {% endblock %}
+
+{% block content %}
+
+<div>
+    <form method="post" action="{{ url_for('students_add') }}">
+
+        <label for="name">Name: *</label>
+        <input type="text" id="name" name="name" required autofocus
+               placeholder="e.g. Sara Al-Harbi">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="std_email"
+               placeholder="e.g. sara@example.com">
+
+        <div>
+            <div>
+                <label for="city">City:</label>
+                <select id="city" name="city">
+                    <option value="">-- Select a city --</option>
+                    <option value="Riyadh">Riyadh</option>
+                    <option value="Jeddah">Jeddah</option>
+                    <option value="Mecca">Mecca</option>
+                    <option value="Madinah">Madinah</option>
+                    <option value="Dammam">Dammam</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age"
+                       min="16" max="100" placeholder="20">
+            </div>
+        </div>
+
+        <label for="gpa">GPA (0 - 5):</label>
+        <input type="number" id="gpa" name="gpa"
+               step="0.01" min="0" max="5" placeholder="4.5">
+
+        <div>
+            <button type="submit">Save Student</button>
+            
+        </div>
+    </form>
+</div>
+
+{% endblock %}

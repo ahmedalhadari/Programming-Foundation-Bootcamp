@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %} Show All Students {% endblock %}
+{% block content %}
+ <h1> Students List</h1>
+<table border="1">
+    <tr>
+        <th> ID </th>
+        <th> Name </th>
+        <th> Email </th>
+        <th> City </th>
+        <th> Age </th>
+        <th> GPA </th>
+    </tr>
+     {% for s in students %}
+     <tr>
+        <td>{{ s.id }}</td>
+        <td>{{ s.name }}</td>
+        <td>{{ s.email }}</td>
+        <td>{{ s.city }}</td>
+        <td>{{ s.age }}</td>
+        <td>{{ s.gpa }}</td>
+    </tr>
+    {% endfor %} 
+</table>
+ {% endblock %}
