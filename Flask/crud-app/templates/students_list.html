@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %} Show All Students {% endblock %}
 {% block content %}
- <h1> Students List</h1>
+<h1> Students List</h1>
 <table border="1">
     <tr>
         <th> ID </th>
@@ -10,16 +10,20 @@
         <th> City </th>
         <th> Age </th>
         <th> GPA </th>
+        <th> Edit </th>
+        <th> Delete </th>
     </tr>
-     {% for s in students %}
-     <tr>
+    {% for s in students %}
+    <tr>
         <td>{{ s.id }}</td>
         <td>{{ s.name }}</td>
         <td>{{ s.email }}</td>
         <td>{{ s.city }}</td>
         <td>{{ s.age }}</td>
         <td>{{ s.gpa }}</td>
+        <td><a href="{{url_for('students_edit', student_id=s.id)}}">edit</a></td>
+        <td><a href="{{url_for('students_delete', student_id=s.id)}}">Delete</a></td>
     </tr>
-    {% endfor %} 
+    {% endfor %}
 </table>
- {% endblock %}
+{% endblock %}

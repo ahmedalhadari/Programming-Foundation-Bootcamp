@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %} Edit Student {% endblock %}
+
+{% block content %}
+<div>
+    <form method="post" action="#">
+
+        <label for="name">Name: *</label>
+        <input type="text" id="name" name="name" required autofocus value="{{ student.name }}">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{student.email}}">
+
+        <div>
+            <div>
+                <label for="city">City:</label>
+                <select id="city" name="city">
+                    <option value="">-- Select a city --</option>
+                    <option value="Riyadh" {% if student.city == 'Riyadh' %} selected {%endif %}>Riyadh</option>
+                    <option value="Jeddah" {% if student.city == 'Jeddah' %} selected {%endif %}>Jeddah</option>
+                    <option value="Mecca" {% if student.city == 'Mecca' %} selected {%endif %}>Mecca</option>
+                    <option value="Madinah" {% if student.city == 'Madinah' %} selected {%endif %}>Madinah</option>
+                    <option value="Dammam" {% if student.city == 'Dammam' %} selected {%endif %}>Dammam</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" value="{{student.age}}">
+            </div>
+        </div>
+
+        <label for="gpa">GPA (0 - 5):</label>
+        <input type="text" id="gpa" name="gpa" value="{{student.gpa}}">
+
+        <div>
+            <button type="submit">Update Student</button>
+            
+        </div>
+    </form>
+</div>
+
+{% endblock %}
